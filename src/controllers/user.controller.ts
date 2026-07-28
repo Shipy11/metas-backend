@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { createUser, loginUser } from "../services/user.services";
+import { createUser, getAllUsers, loginUser } from "../services/user.services";
 import {
   createUserSchema,
   loginUserSchema,
@@ -40,5 +40,21 @@ export const loginUserController = async (
     return res.status(200).send("User Authenticated");
   } catch (error) {
     next(error);
+  }
+};
+
+export const getAllUsersController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const users = await getAllUsers();
+    return res.status(200).json({
+      status: "success",
+      data: users,
+    });
+  } catch (e) {
+    next(e);
   }
 };

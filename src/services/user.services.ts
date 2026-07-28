@@ -2,7 +2,6 @@ import prisma from "../lib/prisma";
 import { UserType } from "@prisma/client";
 import bcrypt from "bcrypt";
 import AppError from "../errors/AppError";
-import NotFoundError from "../errors/NotFoundError";
 import UnauthorizedError from "../errors/UnauthorizedError";
 
 type CreateUserData = {
@@ -54,4 +53,18 @@ export const loginUser = async (data: { email: string; password: string }) => {
     throw new UnauthorizedError("Invalid email or password");
   }
   return user;
+};
+
+export const getAllUsers = async () => {
+  const users = await prisma.user.findMany({
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      userType: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+  return users;
 };

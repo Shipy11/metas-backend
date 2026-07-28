@@ -1,6 +1,9 @@
 import prisma from "../lib/prisma";
 import { UserType } from "@prisma/client";
 import bcrypt from "bcrypt";
+import AppError from "../errors/AppError";
+import NotFoundError from "../errors/NotFoundError";
+import UnauthorizedError from "../errors/UnauthorizedError";
 
 type CreateUserData = {
   name: string;
@@ -16,7 +19,7 @@ export const createUser = async (data: CreateUserData) => {
     },
   });
   if (existingUser) {
-    throw new Error("User already exists");
+    throw new AppError("An account with this email already exists", 409);
   }
 
   const SALT_ROUNDS = 10;
@@ -41,11 +44,14 @@ export const loginUser = async (data: { email: string; password: string }) => {
     },
   });
   if (!user) {
-    throw new Error("User Not Found");
+    throw new UnauthorizedError("Invalid email or password");
   }
   const isPasswordMatched = await bcrypt.compare(
     data.password,
-    user?.password as string,
+    user.password as string,
   );
-  return isPasswordMatched;
+  if (!isPasswordMatched) {
+    throw new UnauthorizedError("Invalid email or password");
+  }
+  return user;
 };

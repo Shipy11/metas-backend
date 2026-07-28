@@ -23,3 +23,10 @@ Thumbs.db
 
 # Prisma (only if you use SQLite later)
 prisma/dev.db
+/src/generated/prisma
+
+.vscode
+.agents
+.claude
+.windsurf
+skills-lock.json

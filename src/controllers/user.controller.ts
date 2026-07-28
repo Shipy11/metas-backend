@@ -36,8 +36,11 @@ export const loginUserController = async (
 ) => {
   try {
     const validatedLoginData = loginUserSchema.parse(req.body);
-    const user = await loginUser(validatedLoginData);
-    return res.status(200).send("User Authenticated");
+    const { user, accessToken } = await loginUser(validatedLoginData);
+    return res.status(200).json({
+      user,
+      accessToken,
+    });
   } catch (error) {
     next(error);
   }

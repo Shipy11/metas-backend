@@ -3,6 +3,7 @@ import { UserType } from "@prisma/client";
 import bcrypt from "bcrypt";
 import AppError from "../errors/AppError";
 import UnauthorizedError from "../errors/UnauthorizedError";
+import { generateToken } from "../lib/jwt";
 
 type CreateUserData = {
   name: string;
@@ -52,7 +53,16 @@ export const loginUser = async (data: { email: string; password: string }) => {
   if (!isPasswordMatched) {
     throw new UnauthorizedError("Invalid email or password");
   }
-  return user;
+  const accessToken = generateToken(user.id);
+  return {
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      userType: user.userType,
+    },
+    accessToken,
+  };
 };
 
 export const getAllUsers = async () => {

@@ -1,5 +1,9 @@
 import jwt, { SignOptions, Secret } from "jsonwebtoken";
 
+interface TokenPayload {
+  userId: number;
+}
+
 export const generateToken = (userId: number) => {
   const jwtSecret = process.env.JWT_SECRET;
   if (!jwtSecret) {
@@ -15,4 +19,13 @@ export const generateToken = (userId: number) => {
   });
 
   return jwtToken;
+};
+
+export const verifyToken = (token: string) => {
+  const jwtSecret = process.env.JWT_SECRET;
+  if (!jwtSecret) {
+    throw new Error("JWT Secret Not found");
+  }
+  const decodedToken = jwt.verify(token, jwtSecret) as TokenPayload;
+  return decodedToken;
 };

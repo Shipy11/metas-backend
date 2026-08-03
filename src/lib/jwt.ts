@@ -1,10 +1,10 @@
 import jwt, { SignOptions, Secret } from "jsonwebtoken";
 
 interface TokenPayload {
-  userId: number;
+  accountId: number;
 }
 
-export const generateToken = (userId: number) => {
+export const generateToken = (accountId: number) => {
   const jwtSecret = process.env.JWT_SECRET;
   if (!jwtSecret) {
     throw new Error("JWT Secret Not found");
@@ -14,7 +14,7 @@ export const generateToken = (userId: number) => {
     throw new Error("JWT expiry durartion Not found");
   }
 
-  const jwtToken = jwt.sign({ userId }, jwtSecret as Secret, {
+  const jwtToken = jwt.sign({ accountId }, jwtSecret as Secret, {
     expiresIn: jwtExpiryDuration as SignOptions["expiresIn"],
   });
 

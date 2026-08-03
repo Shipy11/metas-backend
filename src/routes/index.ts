@@ -1,11 +1,11 @@
 import Router from "express";
 import healthRouter from "./health.routes";
-import userRouter from "./user.routes";
+import accountRouter from "./account.routes";
 
 const router = Router();
 
 router.use("/health", healthRouter);
 
-router.use("/user", userRouter);
+router.use("/account", accountRouter);
 
 export default router;

@@ -1,24 +1,24 @@
 import prisma from "../lib/prisma";
-import { UserType } from "@prisma/client";
+import { AccountRole } from "@prisma/client";
 import bcrypt from "bcrypt";
 import AppError from "../errors/AppError";
 import UnauthorizedError from "../errors/UnauthorizedError";
 import { generateToken } from "../lib/jwt";
 
-type CreateUserData = {
+type CreateAccountData = {
   name: string;
   email: string;
   password: string;
-  userType: UserType;
+  role: AccountRole;
 };
 
-export const createUser = async (data: CreateUserData) => {
-  const existingUser = await prisma.user.findUnique({
+export const createAccount = async (data: CreateAccountData) => {
+  const existingAccount = await prisma.account.findUnique({
     where: {
       email: data.email,
     },
   });
-  if (existingUser) {
+  if (existingAccount) {
     throw new AppError("An account with this email already exists", 409);
   }
 
@@ -26,55 +26,58 @@ export const createUser = async (data: CreateUserData) => {
 
   const hashedPassword = await bcrypt.hash(data.password, SALT_ROUNDS);
 
-  const user = await prisma.user.create({
+  const account = await prisma.account.create({
     data: {
       name: data.name,
       email: data.email,
-      password: hashedPassword,
-      userType: data.userType,
+      passwordHash: hashedPassword,
+      role: data.role,
     },
   });
-  return user;
+  return account;
 };
 
-export const loginUser = async (data: { email: string; password: string }) => {
-  const user = await prisma.user.findUnique({
+export const loginAccount = async (data: {
+  email: string;
+  password: string;
+}) => {
+  const account = await prisma.account.findUnique({
     where: {
       email: data.email,
     },
   });
-  if (!user) {
+  if (!account) {
     throw new UnauthorizedError("Invalid email or password");
   }
   const isPasswordMatched = await bcrypt.compare(
     data.password,
-    user.password as string,
+    account.passwordHash as string,
   );
   if (!isPasswordMatched) {
     throw new UnauthorizedError("Invalid email or password");
   }
-  const accessToken = generateToken(user.id);
+  const accessToken = generateToken(account.id);
   return {
-    user: {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      userType: user.userType,
+    account: {
+      id: account.id,
+      name: account.name,
+      email: account.email,
+      role: account.role,
     },
     accessToken,
   };
 };
 
-export const getAllUsers = async () => {
-  const users = await prisma.user.findMany({
+export const getAllAccounts = async () => {
+  const accounts = await prisma.account.findMany({
     select: {
       id: true,
       name: true,
       email: true,
-      userType: true,
+      role: true,
       createdAt: true,
       updatedAt: true,
     },
   });
-  return users;
+  return accounts;
 };

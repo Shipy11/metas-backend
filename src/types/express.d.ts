@@ -1,13 +1,14 @@
-import { UserType } from "@prisma/client";
+import { AccountRole } from "@prisma/client";
 
 declare global {
   namespace Express {
     interface Request {
-      user?: {
+      account?: {
         name: string;
         id: number;
         email: string;
-        userType: UserType;
+        role: AccountRole;
+        isActive: boolean;
       };
     }
   }

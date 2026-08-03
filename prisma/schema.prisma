@@ -12,44 +12,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum UserType {
-  SUPER_USER
-  RESTAURANT_USER
+enum AccountRole {
+  USER
+  ADMIN
 }
 
-model User {
-  id          Int          @id @default(autoincrement())
-  name        String
-  email       String       @unique
-  password    String
-  phoneNumber String?
-  userType    UserType
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  lastLogin   DateTime?
-  restaurants Restaurant[]
-}
+model Account {
+  id           Int         @id @default(autoincrement())
+  name         String
+  email        String      @unique
+  passwordHash String
+  phoneNumber  String?
+  role         AccountRole @default(USER)
 
-model Restaurant {
-  id            Int       @id @default(autoincrement())
-  name          String
-  email         String?   @unique
-  phone         String    @unique
-  address       String
-  city          String
-  state         String
-  pincode       String
-  gstNumber     String?   @unique
-  fssaiLicense  String    @unique
-  logoUrl       String?
-  coverImageUrl String?
-  description   String?
-  openingTime   String?
-  closingTime   String?
-  isActive      Boolean   @default(true)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  deletedAt     DateTime?
-  createdById   Int
-  createdBy     User      @relation(fields: [createdById], references: [id])
+  isActive    Boolean   @default(true)
+  lastLoginAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

@@ -30,4 +30,33 @@ model Account {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+
+  companiesCreated Company[] @relation("CompanyCreatedBy")
+  companiesUpdated Company[] @relation("CompanyUpdatedBy")
+}
+
+model Company {
+  id          Int     @id @default(autoincrement())
+  name        String
+  legalName   String?
+  email       String  @unique
+  phoneNumber String  @unique
+  address     String?
+  city        String?
+  state       String?
+  country     String?
+  gstNumber   String? @unique
+  description String?
+  logoUrl     String?
+  isActive    Boolean @default(true)
+
+  createdById     Int
+  lastUpdatedById Int?
+
+  createdBy     Account  @relation("CompanyCreatedBy", fields: [createdById], references: [id])
+  lastUpdatedBy Account? @relation("CompanyUpdatedBy", fields: [lastUpdatedById], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

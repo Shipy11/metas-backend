@@ -4,6 +4,7 @@ import { verifyToken } from "../lib/jwt";
 import prisma from "../lib/prisma";
 import { AccountRole } from "@prisma/client";
 import ForbiddenError from "../errors/ForbiddenError";
+import { TokenExpiredError } from "jsonwebtoken";
 
 export const authenticate = async (
   req: Request,
@@ -37,6 +38,11 @@ export const authenticate = async (
     req.account = account;
     return next();
   } catch (e) {
+    if (e instanceof TokenExpiredError) {
+      const tokenExpiredError = new UnauthorizedError("Token Expired");
+      return next(tokenExpiredError);
+    }
+
     return next(e);
   }
 };

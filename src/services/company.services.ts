@@ -14,6 +14,11 @@ export type createCompanyData = {
   description?: string;
   logoUrl?: string;
   legalName?: string;
+  industry?: string;
+  businessType?: string;
+  productsOrServices?: string;
+  foundedYear?: number;
+  websiteUrl?: string;
 };
 
 // Type for update: allow any subset of updatable fields.
@@ -35,6 +40,7 @@ export const createCompany = async (
       ],
     },
   });
+
   if (existingCompany) {
     if (existingCompany.email === data.email) {
       throw new AppError("Company with this email already exists", 409);
@@ -48,10 +54,18 @@ export const createCompany = async (
       throw new AppError("Company with this GST number already exists", 409);
     }
   }
-  return await prisma.company.create({
+
+  return prisma.company.create({
     data: {
       ...data,
       createdById,
+
+      members: {
+        create: {
+          accountId: createdById,
+          role: "OWNER",
+        },
+      },
     },
   });
 };
@@ -83,6 +97,20 @@ export const getCompany = async (companyId: number) => {
   return await prisma.company.findUnique({
     where: {
       id: companyId,
+    },
+    include: {
+      members: {
+        include: {
+          account: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              phoneNumber: true,
+            },
+          },
+        },
+      },
     },
   });
 };

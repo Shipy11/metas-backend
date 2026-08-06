@@ -31,9 +31,11 @@ model Account {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-
-  companiesCreated Company[] @relation("CompanyCreatedBy")
-  companiesUpdated Company[] @relation("CompanyUpdatedBy")
+  companiesCreated        Company[]         @relation("CompanyCreatedBy")
+  companiesUpdated        Company[]         @relation("CompanyUpdatedBy")
+  financialRecordsCreated FinancialRecord[] @relation("FinancialRecordCreatedBy")
+  financialRecordsUpdated FinancialRecord[] @relation("FinancialRecordUpdatedBy")
+  companyMemberships      CompanyMember[]
 }
 
 model Company {
@@ -42,20 +44,73 @@ model Company {
   legalName   String?
   email       String  @unique
   phoneNumber String  @unique
-  address     String?
-  city        String?
-  state       String?
-  country     String?
-  gstNumber   String? @unique
-  description String?
-  logoUrl     String?
-  isActive    Boolean @default(true)
+
+  description        String?
+  industry           String?
+  businessType       String?
+  productsOrServices String?
+  foundedYear        Int?
+  websiteUrl         String?
+  logoUrl            String?
+
+  address   String?
+  city      String?
+  state     String?
+  country   String?
+  gstNumber String? @unique
+
+  isActive Boolean @default(true)
 
   createdById     Int
   lastUpdatedById Int?
 
-  createdBy     Account  @relation("CompanyCreatedBy", fields: [createdById], references: [id])
-  lastUpdatedBy Account? @relation("CompanyUpdatedBy", fields: [lastUpdatedById], references: [id])
+  createdBy        Account           @relation("CompanyCreatedBy", fields: [createdById], references: [id])
+  lastUpdatedBy    Account?          @relation("CompanyUpdatedBy", fields: [lastUpdatedById], references: [id])
+  financialRecords FinancialRecord[]
+  members          CompanyMember[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum CompanyRole {
+  OWNER
+  PARTNER
+}
+
+model CompanyMember {
+  id        Int         @id @default(autoincrement())
+  accountId Int
+  companyId Int
+  role      CompanyRole
+  isActive  Boolean     @default(true)
+
+  account Account @relation(fields: [accountId], references: [id])
+  company Company @relation(fields: [companyId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([accountId, companyId])
+}
+
+model FinancialRecord {
+  id        Int @id @default(autoincrement())
+  companyId Int
+
+  periodStart DateTime
+  periodEnd   DateTime
+
+  revenue          Decimal  @db.Decimal(15, 2)
+  expenses         Decimal  @db.Decimal(15, 2)
+  companyValuation Decimal? @db.Decimal(15, 2)
+
+  createdById     Int
+  lastUpdatedById Int?
+
+  company       Company  @relation(fields: [companyId], references: [id])
+  createdBy     Account  @relation("FinancialRecordCreatedBy", fields: [createdById], references: [id])
+  lastUpdatedBy Account? @relation("FinancialRecordUpdatedBy", fields: [lastUpdatedById], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

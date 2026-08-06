@@ -69,7 +69,7 @@ export const loginAccount = async (data: {
 };
 
 export const getAllAccounts = async () => {
-  const accounts = await prisma.account.findMany({
+  return prisma.account.findMany({
     select: {
       id: true,
       name: true,
@@ -77,7 +77,20 @@ export const getAllAccounts = async () => {
       role: true,
       createdAt: true,
       updatedAt: true,
+
+      companyMemberships: {
+        select: {
+          id: true,
+          role: true,
+          isActive: true,
+          company: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
     },
   });
-  return accounts;
 };

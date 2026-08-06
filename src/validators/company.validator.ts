@@ -12,6 +12,11 @@ const fields = {
   description: z.string().optional(),
   logoUrl: z.string().optional(),
   legalName: z.string().optional(),
+  industry: z.string().optional(),
+  businessType: z.string().optional(),
+  productsOrServices: z.string().optional(),
+  foundedYear: z.number().optional(),
+  websiteUrl: z.string().optional(),
 };
 
 export const updateCompanySchema = z.object(fields);

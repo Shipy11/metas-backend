@@ -1,6 +1,7 @@
 import { z } from "zod";
+import { financialRecordPayloadSchema } from "./financial.validator";
 
-const fields = {
+const companyFields = {
   name: z.string().min(3).max(50).optional(),
   email: z.email().optional(),
   phoneNumber: z.string().optional(),
@@ -19,13 +20,14 @@ const fields = {
   websiteUrl: z.string().optional(),
 };
 
-export const updateCompanySchema = z.object(fields);
+export const updateCompanySchema = z.object(companyFields);
 
 export const createCompanySchema = z.object({
-  ...fields,
+  ...companyFields,
   name: z.string().min(3).max(50),
   email: z.email(),
   phoneNumber: z.string(),
+  financials: financialRecordPayloadSchema,
 });
 
 export const companyIdSchema = z.object({

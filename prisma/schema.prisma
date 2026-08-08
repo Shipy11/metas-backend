@@ -105,6 +105,10 @@ model FinancialRecord {
   expenses         Decimal  @db.Decimal(15, 2)
   companyValuation Decimal? @db.Decimal(15, 2)
 
+  totalDebt   Decimal @default(0) @db.Decimal(15, 2)
+  totalAssets Decimal? @db.Decimal(15, 2)
+  cashBalance Decimal? @db.Decimal(15, 2)
+
   createdById     Int
   lastUpdatedById Int?
 

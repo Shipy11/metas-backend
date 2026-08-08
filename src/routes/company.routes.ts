@@ -6,6 +6,10 @@ import {
   getCompanyController,
   updateCompanyController,
 } from "../controllers/company.controller";
+import {
+  createFinancialRecordController,
+  updateFinancialRecordController,
+} from "../controllers/financial.controller";
 import { authenticate, authorize } from "../middlewares/auth.middleware";
 
 const companyRouter = Router();
@@ -24,5 +28,17 @@ companyRouter.get(
 );
 
 companyRouter.get("/:companyId", authenticate, getCompanyController);
+
+companyRouter.post(
+  "/:companyId/financials",
+  authenticate,
+  createFinancialRecordController,
+);
+
+companyRouter.patch(
+  "/:companyId/financials/:financeId",
+  authenticate,
+  updateFinancialRecordController,
+);
 
 export default companyRouter;

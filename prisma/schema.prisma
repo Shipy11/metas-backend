@@ -36,6 +36,9 @@ model Account {
   financialRecordsCreated FinancialRecord[] @relation("FinancialRecordCreatedBy")
   financialRecordsUpdated FinancialRecord[] @relation("FinancialRecordUpdatedBy")
   companyMemberships      CompanyMember[]
+
+  offersCreated PartnershipOffer[] @relation("PartnershipOfferCreatedBy")
+  offersUpdated PartnershipOffer[] @relation("PartnershipOfferUpdatedBy")
 }
 
 model Company {
@@ -69,6 +72,8 @@ model Company {
   financialRecords FinancialRecord[]
   members          CompanyMember[]
 
+  partnershipOffers PartnershipOffer[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -79,11 +84,15 @@ enum CompanyRole {
 }
 
 model CompanyMember {
-  id        Int         @id @default(autoincrement())
+  id        Int @id @default(autoincrement())
   accountId Int
   companyId Int
-  role      CompanyRole
-  isActive  Boolean     @default(true)
+
+  role CompanyRole
+
+  ownershipPercentage Decimal @default(0) @db.Decimal(5, 2)
+
+  isActive Boolean @default(true)
 
   account Account @relation(fields: [accountId], references: [id])
   company Company @relation(fields: [companyId], references: [id])
@@ -105,7 +114,7 @@ model FinancialRecord {
   expenses         Decimal  @db.Decimal(15, 2)
   companyValuation Decimal? @db.Decimal(15, 2)
 
-  totalDebt   Decimal @default(0) @db.Decimal(15, 2)
+  totalDebt   Decimal  @default(0) @db.Decimal(15, 2)
   totalAssets Decimal? @db.Decimal(15, 2)
   cashBalance Decimal? @db.Decimal(15, 2)
 
@@ -115,6 +124,52 @@ model FinancialRecord {
   company       Company  @relation(fields: [companyId], references: [id])
   createdBy     Account  @relation("FinancialRecordCreatedBy", fields: [createdById], references: [id])
   lastUpdatedBy Account? @relation("FinancialRecordUpdatedBy", fields: [lastUpdatedById], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum EquityOfferType {
+  NEW_EQUITY
+  STAKE_TRANSFER
+}
+
+enum PartnershipOfferStatus {
+  OPEN
+  PARTIALLY_FUNDED
+  FUNDED
+  CLOSED
+  CANCELLED
+}
+
+model PartnershipOffer {
+  id Int @id @default(autoincrement())
+
+  companyId Int
+
+  title       String
+  description String?
+
+  fundingGoal      Decimal @db.Decimal(15, 2)
+  fundingRaised    Decimal @default(0) @db.Decimal(15, 2)
+  equityPercentage Decimal @db.Decimal(5, 2)
+
+  minimumInvestment Decimal? @db.Decimal(15, 2)
+
+  purpose String?
+
+  offerType EquityOfferType
+
+  status PartnershipOfferStatus @default(OPEN)
+
+  expiresAt DateTime?
+
+  createdById     Int
+  lastUpdatedById Int?
+
+  company       Company  @relation(fields: [companyId], references: [id])
+  createdBy     Account  @relation("PartnershipOfferCreatedBy", fields: [createdById], references: [id])
+  lastUpdatedBy Account? @relation("PartnershipOfferUpdatedBy", fields: [lastUpdatedById], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

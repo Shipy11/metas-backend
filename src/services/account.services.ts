@@ -83,6 +83,7 @@ export const getAllAccounts = async () => {
           id: true,
           role: true,
           isActive: true,
+          ownershipPercentage: true,
           company: {
             select: {
               id: true,

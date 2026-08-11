@@ -1,16 +1,12 @@
 # Metas Backend
 
-A backend API for the **Metas Restaurant Management Platform**, built as a learning project to explore modern backend development using Node.js and TypeScript.
+A backend REST API for **Metas**, a partnership investment management platform where businesses can showcase their companies, publish investment opportunities, and manage partnerships.
 
-## 📖 About
-
-Metas is a B2B restaurant management platform that helps restaurant owners manage their business operations through a centralized dashboard.
-
-> **Note:** This project is built for learning and portfolio purposes.
+> **Note:** This project is being built as a learning and portfolio project using modern backend development practices.
 
 ---
 
-## 🚀 Tech Stack
+# 🚀 Tech Stack
 
 - Node.js
 - TypeScript
@@ -18,43 +14,108 @@ Metas is a B2B restaurant management platform that helps restaurant owners manag
 - PostgreSQL
 - Prisma ORM
 - Docker
+- Zod
+- JWT Authentication
 - Yarn
 
 ---
 
-## 📁 Project Structure
+# 📖 Features
+
+## Authentication
+
+- Account registration
+- Secure login using JWT
+- Role-based authorization
+
+## Company Management
+
+- Create and update companies
+- Company ownership and membership
+- Company profile management
+- Soft delete support
+
+## Financial Records
+
+- Store company financial history
+- Revenue and expense tracking
+- Company valuation
+- Assets, liabilities, and cash balance
+- Financial record history
+
+## Partnership Management _(In Progress)_
+
+- Publish partnership opportunities
+- Investor proposals
+- Partnership ownership management
+
+---
+
+# 📁 Project Structure
 
 ```text
 src/
 ├── config/
+├── controllers/
+├── errors/
+├── lib/
+├── middlewares/
 ├── routes/
+├── services/
+├── validators/
 ├── app.ts
 └── server.ts
+
+prisma/
+├── migrations/
+└── schema.prisma
 ```
 
 ---
 
-## ⚙️ Getting Started
+# ⚙️ Getting Started
 
-### Install dependencies
+## Install dependencies
 
 ```bash
 yarn install
 ```
 
-### Start the development server
+## Configure environment
+
+Create a `.env` file:
+
+```env
+DATABASE_URL=<your_postgresql_connection_string>
+JWT_SECRET=<your_jwt_secret>
+PORT=8000
+```
+
+## Run database migrations
+
+```bash
+npx prisma migrate dev
+```
+
+## Generate Prisma Client
+
+```bash
+npx prisma generate
+```
+
+## Start the development server
 
 ```bash
 yarn dev
 ```
 
-### Build the project
+## Build
 
 ```bash
 yarn build
 ```
 
-### Start the production build
+## Run production build
 
 ```bash
 yarn start
@@ -62,21 +123,38 @@ yarn start
 
 ---
 
-## 🎯 Roadmap
+# 🗄 Database
 
-- [x] Project setup
-- [x] Git & GitHub
-- [x] TypeScript configuration
-- [ ] Express server
-- [ ] Docker & PostgreSQL
-- [ ] Prisma integration
-- [ ] Order CRUD
-- [ ] Menu management
-- [ ] Billing
-- [ ] Dashboard & Analytics
+Current core entities:
+
+- Account
+- Company
+- CompanyMember
+- FinancialRecord
+- PartnershipOffer _(In Progress)_
 
 ---
 
-## 📄 License
+# 🎯 Roadmap
+
+- [x] Project setup
+- [x] TypeScript configuration
+- [x] Express API
+- [x] Docker & PostgreSQL
+- [x] Prisma ORM integration
+- [x] JWT Authentication
+- [x] Company Management
+- [x] Company Membership
+- [x] Financial Records
+- [ ] Partnership Offers
+- [ ] Investment Proposals
+- [ ] Partnership Approval Workflow
+- [ ] Company Feed
+- [ ] Notifications
+- [ ] Reports & Analytics
+
+---
+
+# 📄 License
 
 This project is licensed under the MIT License.

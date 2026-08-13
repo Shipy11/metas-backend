@@ -39,6 +39,9 @@ model Account {
 
   offersCreated PartnershipOffer[] @relation("PartnershipOfferCreatedBy")
   offersUpdated PartnershipOffer[] @relation("PartnershipOfferUpdatedBy")
+
+  proposalsCreated  InvestmentProposal[] @relation("InvestmentProposalCreatedBy")
+  proposalsReviewed InvestmentProposal[] @relation("InvestmentProposalReviewedBy")
 }
 
 model Company {
@@ -76,6 +79,8 @@ model Company {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  investmentProposals InvestmentProposal[]
 }
 
 enum CompanyRole {
@@ -153,6 +158,7 @@ model PartnershipOffer {
   fundingGoal      Decimal @db.Decimal(15, 2)
   fundingRaised    Decimal @default(0) @db.Decimal(15, 2)
   equityPercentage Decimal @db.Decimal(5, 2)
+  equityCommitted  Decimal @default(0) @db.Decimal(5, 2)
 
   minimumInvestment Decimal? @db.Decimal(15, 2)
 
@@ -173,4 +179,51 @@ model PartnershipOffer {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  investmentProposals InvestmentProposal[]
+
+  @@index([companyId])
+}
+
+enum InvestmentProposalStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+}
+
+model InvestmentProposal {
+  id Int @id @default(autoincrement())
+
+  companyId Int
+  offerId   Int
+
+  createdById Int
+
+  investmentAmount Decimal @db.Decimal(15, 2)
+  requestedEquity  Decimal @db.Decimal(5, 2)
+
+  message String?
+
+  status InvestmentProposalStatus @default(PENDING)
+
+  reviewedById Int?
+  reviewedAt   DateTime?
+
+  company Company @relation(fields: [companyId], references: [id])
+
+  offer PartnershipOffer @relation(fields: [offerId], references: [id])
+
+  createdBy Account @relation("InvestmentProposalCreatedBy", fields: [createdById], references: [id])
+
+  reviewedBy Account? @relation("InvestmentProposalReviewedBy", fields: [reviewedById], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([offerId, createdById])
+  @@index([companyId])
+  @@index([offerId])
+  @@index([createdById])
+  @@index([status])
 }

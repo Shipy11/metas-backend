@@ -18,8 +18,17 @@ import {
   getPartnershipOfferController,
 } from "../controllers/partnershipOffer.controller";
 
+import {
+  createProposalController,
+  updateProposalController,
+  updateProposalStatusController,
+  getAllProposalsController,
+  getProposalController,
+} from "../controllers/investmentProposal.controller";
+
 const companyRouter = Router();
 
+// Company
 companyRouter.post("/", authenticate, createCompanyController);
 
 companyRouter.patch("/:companyId", authenticate, updateCompanyController);
@@ -35,6 +44,7 @@ companyRouter.get(
 
 companyRouter.get("/:companyId", authenticate, getCompanyController);
 
+// Financials
 companyRouter.post(
   "/:companyId/financials",
   authenticate,
@@ -47,6 +57,7 @@ companyRouter.patch(
   updateFinancialRecordController,
 );
 
+// Partnership Offers
 companyRouter.post(
   "/:companyId/offers",
   authenticate,
@@ -66,6 +77,37 @@ companyRouter.get(
   "/:companyId/offers/:offerId",
   authenticate,
   getPartnershipOfferController,
+);
+
+// Investment Proposals
+companyRouter.post(
+  "/:companyId/offers/:offerId/proposals",
+  authenticate,
+  createProposalController,
+);
+
+companyRouter.get(
+  "/:companyId/offers/:offerId/proposals",
+  authenticate,
+  getAllProposalsController,
+);
+
+companyRouter.get(
+  "/:companyId/offers/:offerId/proposals/:proposalId",
+  authenticate,
+  getProposalController,
+);
+
+companyRouter.patch(
+  "/:companyId/offers/:offerId/proposals/:proposalId",
+  authenticate,
+  updateProposalController,
+);
+
+companyRouter.patch(
+  "/:companyId/offers/:offerId/proposals/:proposalId/status",
+  authenticate,
+  updateProposalStatusController,
 );
 
 export default companyRouter;
